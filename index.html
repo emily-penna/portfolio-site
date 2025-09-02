@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-US">
+
+  <head>
+
+    <script type="text/javascript" src="Constants.js"></script>
+    <script type="text/javascript" src="Objects/Entity.js"></script>
+    <script type="text/javascript" src="Objects/MoveableEntity.js"></script>
+    <script type="text/javascript" src="Objects/Player.js"></script>
+    <script type="text/javascript" src="Objects/Enemy.js"></script>
+    <script type="text/javascript" src="Objects/InputController.js"></script>
+    <script type="text/javascript" src="Map/Tile.js"></script>
+    <script type="text/javascript" src="Map/Grid.js"></script>
+    <script type="text/javascript" src="Controllers/GameController.js"></script>
+    <script type="text/javascript" src="Controllers/EnemyController.js"></script>
+  
+
+    <meta charset="utf-8" />
+    <title>Slime Spire</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        background: #eeeeee;
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+
+
+  <body>
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+    <script>
+      // JavaScript code goes here
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const game = new GameController(canvas.width, canvas.height);
+
+        function drawLives() {
+          ctx.font = "16px Arial";
+          ctx.fillStyle = "#0095DD";
+          ctx.fillText(`${game.player.health}`, canvas.width - 65, 20);
+        }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        game.draw(ctx);
+
+        //draw UI above game
+        drawLives()
+      }
+
+      function update() {
+        game.update(currentInput);
+        draw()
+      }
+
+      // call the update every 10 ms  
+      setInterval(update, 10);
+
+
+    </script>
+  </body>
+
+
+
+</html>
