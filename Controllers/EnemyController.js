@@ -14,9 +14,11 @@ class EnemyController {
     }
     
     // creates new enemies and adds them to the enemy list.
-    spawnEnemies() {
+    // needs a reference to the map unfortunately... to make sure enemies spawn on tiles.
+    spawnEnemies(grid) {
         for (let i = 0; i < 5; i++){
-            let e = new Enemy(5, 1, 1, 10+i*100, 10);
+            let coords = grid.getSnappedWorldCoordinates(20+i*100, 50);
+            let e = new Enemy(5, 1, 1, coords.x, coords.y);
             this.enemies.push(e);
         }
     }
@@ -32,6 +34,33 @@ class EnemyController {
         this.enemies.forEach(e => {
             e.draw(ctx)
         });
+    }
+
+    /**move all enemies once */
+    move(){
+        this.enemies.forEach(e => {
+            e.move(this.getRandomDirection());
+        });
+    }
+
+
+    /**Return a random movement direction. Uniform disribution. */
+    getRandomDirection(){
+        let dir = Math.floor(Math.random() * 4 + 1); //random number between 1 and 4
+
+        switch(dir){
+            case 1:
+                return Directions.UP;
+            case 2:
+                return Directions.DOWN;
+            case 3:
+                return Directions.LEFT;
+            case 4:
+                return Directions.RIGHT;
+            default:
+                throw new Error("invalid direction")
+        }
+
     }
 
 }

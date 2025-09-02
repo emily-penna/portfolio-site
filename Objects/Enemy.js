@@ -14,7 +14,7 @@ class Enemy extends MoveableEntity{
 
     draw(ctx){
         ctx.beginPath();
-        ctx.rect(this.xPosition, this.yPosition, 20, 20);
+        ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);
         ctx.fillStyle = "red";
         ctx.fill();
         ctx.closePath();  

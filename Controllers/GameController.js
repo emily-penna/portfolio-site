@@ -8,6 +8,7 @@
 class GameController {
 
     enemies; // EnemyController: manages all enemies on the current floor.
+    treasure; // TreasureController: manages all treasure on the current floor.
     player; // PlayerModel: player character. Controlled by the user.
     grid; //Grid: contains the tilemap. Dictates where entities can move.
 
@@ -29,19 +30,23 @@ class GameController {
     // width: game canvas width
     // height: game canvas height
     constructor(width, height) {
-        this.enemies = new EnemyController;
-        this.enemies.spawnEnemies();
-
-        // spawn the player at the bottom-center of the canvas.
-        this.player = new Player(canvas.width / 2, canvas.height - 30);
-
+        
         //The tile map.
         this.grid = new Grid(width, height, TILESIZE)
+
+        this.enemies = new EnemyController;
+        this.treasure = new TreasureController;
+        
+
+        // spawn the player at the bottom-center of the canvas.
+        this.playerStart = this.grid.getSnappedWorldCoordinates(canvas.width / 2, canvas.height - 30)
+        this.player = new Player();
+
 
         //the first game state is awaiting input.
         this.state = this.GameState.AWAITING_INPUT;
 
-        this.setUpFloor();
+        this.setUpNewFloor();
     }
 
     update(input) {
@@ -53,6 +58,15 @@ class GameController {
             case this.GameState.AWAITING_INPUT:
                 if (this.currentInput != Directions.NONE){
                     this.player.move(this.currentInput);
+                    this.enemies.move();
+                
+                    if(this.grid.IsOnStairs(this.player)){
+                        this.currentFloor++;
+                        this.currentInput = Directions.NONE;
+                        this.setUpNewFloor();
+                    }
+
+
                     this.state = this.GameState.IN_TURN;
                 }
                 this.enemies.update();
@@ -60,7 +74,10 @@ class GameController {
 
 
             case this.GameState.IN_TURN:
-                console.log("playing turn!")
+                console.log("playing out turn!")
+
+                // player has reached the exit
+                
                 if (currentInput == Directions.NONE){
                     this.state = this.GameState.AWAITING_INPUT;
                 }
@@ -72,13 +89,23 @@ class GameController {
 
     draw(ctx){
         this.grid.draw(ctx);
+        this.treasure.draw(ctx);
         this.enemies.draw(ctx)
         this.player.draw(ctx);
+
+        //draw the lines of the grid
+        if (DEBUG_MODE){
+            this.grid.debugDraw(ctx)
+        }
     }
 
 
-    setUpFloor(){
+    setUpNewFloor(){
         this.grid.generateFloor();
+        this.player.setPosition(this.grid.startTile.position.x, this.grid.startTile.position.y);
+        this.enemies.spawnEnemies(this.grid);   
+        this.treasure.spawnTreasure(this.grid);           
+        console.log(this.player.xPosition)
     }
 
 }

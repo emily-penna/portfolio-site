@@ -15,12 +15,18 @@ class Player extends MoveableEntity{
     }
 
     // draw the player on the canvas
-    draw(canvas){
-        canvas.beginPath();
-        canvas.arc(this.xPosition, this.yPosition, 10, 0, Math.PI * 2);
-        canvas.fillStyle = "#0095DD";
-        canvas.fill();
-        canvas.closePath();
+    draw(ctx){
+        // canvas.beginPath();
+        // canvas.arc(this.xPosition, this.yPosition, 10, 0, Math.PI * 2);
+        // canvas.fillStyle = "#0095DD";
+        // canvas.fill();
+        // canvas.closePath();
+
+        ctx.beginPath();
+        ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();  
     }
 
     onCollision(other){
