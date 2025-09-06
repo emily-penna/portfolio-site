@@ -121,6 +121,11 @@ class Grid {
         return this.tiles[coords.x][coords.y].type === TileTypes.STAIRS;
     }
 
+    /** Returns the player's start position */
+    getPlayerStart(){
+        return {x: this.startTile.position.x, y: this.startTile.position.y};
+    }
+
 
 
     //HELPER METHODS - TILE GRID NAVIGATION

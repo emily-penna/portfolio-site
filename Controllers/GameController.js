@@ -2,6 +2,7 @@
  * Game controller contains the manages the gameplay loop.
  * Contains the update loop, manages game flow, translates input into game actions.
  * creates the other controllers and tells the other controllers when to do their tasks.
+ * Manages communication between controllers.
  */
 
 
@@ -16,7 +17,8 @@ class GameController {
     GameState = Object.freeze(
         {
             AWAITING_INPUT: "awaiting",  //game state waiting for player input. idle animataions for all entities
-            IN_TURN: "in turn" // animating through each entitiy groups turn. player inputs are not read.
+            RESOLVING_INPUT: "in turn", // animating through each entitiy groups turn. player inputs are not read.
+            PROGRESSING_FLOOR: "next" // transition to next floor of the spire.
         }
     );
 
@@ -36,7 +38,6 @@ class GameController {
 
         this.enemies = new EnemyController;
         this.treasure = new TreasureController;
-        
 
         // spawn the player at the bottom-center of the canvas.
         this.playerStart = this.grid.getSnappedWorldCoordinates(canvas.width / 2, canvas.height - 30)
@@ -50,40 +51,48 @@ class GameController {
     }
 
     update(input) {
-
+        // Read player input
         this.currentInput = input;
 
+        // console.log(this.state);
         switch(this.state){
-
             case this.GameState.AWAITING_INPUT:
+                //If we receive a new player input
                 if (this.currentInput != Directions.NONE){
+                    // move the player in the corresponding direction
                     this.player.move(this.currentInput);
-                    this.enemies.move();
-                
+            
+                    // check if the player has completed the floor
                     if(this.grid.IsOnStairs(this.player)){
+                        this.state = this.GameState.PROGRESSING_FLOOR;
                         this.currentFloor++;
-                        this.currentInput = Directions.NONE;
                         this.setUpNewFloor();
+
+                    } else {
+                        this.state = this.GameState.RESOLVING_INPUT;
+
+                        // move all enemies
+                        // this.enemies.move();
+                        //TODO: check for collisions
+                        CollisionController.resolveCollisions(this.player, this.enemies.enemies);
+                        CollisionController.resolveCollisions(this.player, this.treasure.treasure);
+
                     }
-
-
-                    this.state = this.GameState.IN_TURN;
                 }
-                this.enemies.update();
                 break;
 
-
-            case this.GameState.IN_TURN:
-                console.log("playing out turn!")
-
-                // player has reached the exit
-                
+            // wait for all movement & animations to resolve before allowing next player input.
+            case this.GameState.RESOLVING_INPUT:
+            case this.GameState.PROGRESSING_FLOOR:
                 if (currentInput == Directions.NONE){
                     this.state = this.GameState.AWAITING_INPUT;
                 }
                 break;
-
         }
+
+        this.treasure.update();
+        this.enemies.update();
+        this.player.update();
 
     }
 
@@ -101,11 +110,12 @@ class GameController {
 
 
     setUpNewFloor(){
+        this.currentInput = Directions.NONE;
+
         this.grid.generateFloor();
-        this.player.setPosition(this.grid.startTile.position.x, this.grid.startTile.position.y);
+        this.player.setPosition(this.grid.getPlayerStart().x, this.grid.getPlayerStart().y);
         this.enemies.spawnEnemies(this.grid);   
         this.treasure.spawnTreasure(this.grid);           
-        console.log(this.player.xPosition)
     }
 
 }

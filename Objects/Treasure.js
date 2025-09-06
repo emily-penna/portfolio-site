@@ -15,10 +15,17 @@ class Treasure extends Entity{
 
     /** The type of treasure. Dictates value and texture. */
     type; 
+    /** Whether or not this treasure has been collected, and should be destroyed */
+    collected;
 
     constructor(x, y, type=TreasureTypes.GOLD){
         super(x,y);
         this.type  = type;
+        this.collected = false;
+    }
+
+    getValue(){
+        return this.type.value;
     }
 
     draw(ctx){
@@ -27,5 +34,10 @@ class Treasure extends Entity{
         ctx.fillStyle = this.type.color;
         ctx.fill();
         ctx.closePath();  
+    }
+
+    onCollision(other){
+        console.log("collected!")
+        this.collected = true;
     }
 }

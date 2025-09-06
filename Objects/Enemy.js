@@ -20,5 +20,9 @@ class Enemy extends MoveableEntity{
         ctx.closePath();  
     }
 
+    onCollision(other){
+        console.log('attack!!')
+    }
+
 
 }

@@ -31,7 +31,12 @@ class Player extends MoveableEntity{
 
     onCollision(other){
         if (other instanceof Enemy){
-            health -= other.damage;
+            this.health -= other.power;
+            console.log(this.health);
+        } 
+        else if (other instanceof Treasure){
+            this.gold += other.getValue();
+            console.log(this.gold);
         }
     }
 
