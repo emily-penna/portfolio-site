@@ -42,6 +42,10 @@ class Tile {
         this.type = type;
     }
 
+    isWalkable(){
+        return this.type.walkable;
+    }
+
     draw(ctx){
         ctx.beginPath();
         ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);

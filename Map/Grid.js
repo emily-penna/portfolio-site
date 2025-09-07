@@ -78,19 +78,11 @@ class Grid {
         //Set one tile to be the stairs:
         this.tiles[this.width - 3][3].setType(TileTypes.STAIRS)
         
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        this.setRandomTile(TileTypes.HOLE)
+        this.setRandomTile(TileTypes.HOLE)
 
         //Set one tile to be the player spawn.
-        let pos = this.getRandomTile();
-        this.startTile = this.tiles[pos.x][pos.y]
-        this.startTile.setType(TileTypes.START)
+        this.startTile = this.setRandomTile(TileTypes.START)
 
         //Set one tile to be the stairs:
         this.tiles[this.width - 3][3].setType(TileTypes.STAIRS)
@@ -165,10 +157,34 @@ class Grid {
         return {x: this.startTile.position.x, y: this.startTile.position.y};
     }
 
+    /** Set a random tile in the grid to the given type */
+    setRandomTile(type){
+        let pos = this.getRandomTile();
+        this.tiles[pos.x][pos.y].setType(type);
+        return this.tiles[pos.x][pos.y];
+    }   
+
+
+
 
     //HELPER METHODS - TILE GRID NAVIGATION
 
+    /** Returns true if the given world position cooresponds to a valid walkable tile. */
+    IsTileWalkable(x, y){
+        let tile = this.getTileFromWorldCoordinates(x, y)
 
+        if (tile instanceof Tile){
+            return tile.isWalkable();
+        }
+        return false;
+    }
+
+    /** Returns true if the given moveable entities target position is valid and walkable. */
+    IsProspectivePositionWalkable(entity){
+        return this.IsTileWalkable(entity.targetX, entity.targetY)
+    }
+
+    /** Returns true if giving index is within the generated group of tiles. */
     isValidTileIndex(x, y){
         return (x >= 0 && x < this.width && y >=0 && y < this.height)
     }
@@ -199,7 +215,7 @@ class Grid {
         return this.tiles[coords.x][coords.y].position;
     }
 
-    /**returns a random, walkable, tile position in the grid */
+    /**returns a random, non-wall, tile position in the grid */
     getRandomTile(){
 
         let x = 0;

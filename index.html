@@ -9,7 +9,7 @@
     <script type="text/javascript" src="Objects/Player.js"></script>
     <script type="text/javascript" src="Objects/Enemy.js"></script>
     <script type="text/javascript" src="Objects/Treasure.js"></script>
-    <script type="text/javascript" src="Objects/InputController.js"></script>
+    <script type="text/javascript" src="Controllers/InputController.js"></script>
     <script type="text/javascript" src="Map/Tile.js"></script>
     <script type="text/javascript" src="Map/Grid.js"></script>
     <script type="text/javascript" src="Controllers/GameController.js"></script>
@@ -63,7 +63,7 @@
         let deltaTime = frameTime - startTime;
         let framerate = (1/(deltaTime)) * 1000;
         startTime = frameTime;
-        console.log(deltaTime);
+        // console.log(deltaTime);
 
         game.update(deltaTime, currentInput);
         draw()

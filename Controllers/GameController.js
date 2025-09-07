@@ -66,6 +66,11 @@ class GameController {
                 if (this.currentInput != Directions.NONE){
                     // move the player in the corresponding direction
                     this.player.move(this.currentInput);
+
+                    // if player is heading towards an unwalkable position, reset its position.
+                    if(!this.grid.IsProspectivePositionWalkable(this.player)){
+                        this.player.setBounceBack();
+                    }
             
                     // check if the player has completed the floor
                     if(this.grid.IsOnStairs(this.player)){
