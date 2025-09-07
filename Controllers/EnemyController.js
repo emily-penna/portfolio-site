@@ -23,9 +23,9 @@ class EnemyController {
         }
     }
 
-    update(){
+    update(dt){
         this.enemies.forEach(e => {
-            e.update();
+            e.update(dt);
         });
     }
 

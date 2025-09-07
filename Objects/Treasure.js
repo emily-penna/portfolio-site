@@ -36,6 +36,10 @@ class Treasure extends Entity{
         ctx.closePath();  
     }
 
+    update(dt){
+        
+    }
+
     onCollision(other){
         console.log("collected!")
         this.collected = true;

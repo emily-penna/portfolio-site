@@ -30,7 +30,8 @@ class Entity {
         throw new Error("Method 'draw()' must be implemented.")
     }
 
-    update(){
-        
+
+    update(dt){
+        throw new Error("Method 'update(dt)' must be implemented.")
     }
 }

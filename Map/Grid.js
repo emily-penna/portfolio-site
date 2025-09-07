@@ -15,6 +15,8 @@ class Grid {
     height; 
     /**Number, the width in tiles of the canvas */
     width;
+    /**Number, the radius in pixels of the playable area */
+    radius;
 
     /** n x n matrix of tile objects.*/
     tiles;
@@ -46,6 +48,27 @@ class Grid {
             }
         }
 
+        //create circular border around the walkable floor.
+        this.radius = Math.min(height, width)/2;
+        let circ = (2 * Math.PI * this.radius);
+
+        // walk around the circumference of a circle
+        for (let theta = 0; theta <= 360; theta++){
+            let radians = theta * Math.PI/180;
+            let x = this.radius * Math.cos(radians);
+            let y = this.radius * Math.sin(radians);
+
+            // calculations need to consider the offset of the center not being at 0,0
+            x = x + this.canvasWidth/2
+            y = y + this.canvasHeight/2
+
+            let tile = this.getTileIndexFromWorldCoordinates(x, y)
+            if (tile){
+                this.tiles[tile.x][tile.y].setType(TileTypes.WALL);
+            } 
+
+        }
+
     }
 
 
@@ -55,17 +78,18 @@ class Grid {
         //Set one tile to be the stairs:
         this.tiles[this.width - 3][3].setType(TileTypes.STAIRS)
         
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
-        this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
+        // this.tiles[this.getRandomTile().x][this.getRandomTile().y].setType(TileTypes.HOLE)
 
         //Set one tile to be the player spawn.
-        this.startTile = this.tiles[this.getRandomTile().x][this.getRandomTile().y]
+        let pos = this.getRandomTile();
+        this.startTile = this.tiles[pos.x][pos.y]
         this.startTile.setType(TileTypes.START)
 
         //Set one tile to be the stairs:
@@ -76,7 +100,9 @@ class Grid {
     clearFloor(){
         for (let c = 0; c < this.width; c++){
             for (let r = 0; r < this.height; r++){
-                this.tiles[c][r].setType(TileTypes.FLOOR);
+                if (this.tiles[c][r].type != TileTypes.WALL){
+                    this.tiles[c][r].setType(TileTypes.FLOOR);
+                }
             }
         }
 
@@ -95,7 +121,7 @@ class Grid {
 
     }
 
-    /**Draw the lines of the grid. */
+    /**Draw the lines of the grid. and center dot */
     debugDraw(ctx){
 
         ctx.beginPath();
@@ -113,11 +139,24 @@ class Grid {
         }
         ctx.stroke();
 
+
+        // center dot
+        ctx.beginPath();
+        ctx.arc(this.canvasWidth/2, this.canvasHeight/2, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath()
+
+        //circular border
+        ctx.beginPath();
+        ctx.arc(this.canvasWidth/2, this.canvasHeight/2, this.radius, 0, Math.PI * 2);
+        ctx.stroke()
+
     }
 
-    /**Returns true if the given entity is on the stair tile. */
+    /**Returns true if the given movableEntity is projected to be on the stair tile. */
     IsOnStairs(entity){
-        let coords = this.getTileCoordinatesFromWorldCoordinates(entity.xPosition, entity.yPosition);
+        let coords = this.getTileIndexFromWorldCoordinates(entity.targetX, entity.targetY);
         return this.tiles[coords.x][coords.y].type === TileTypes.STAIRS;
     }
 
@@ -127,26 +166,51 @@ class Grid {
     }
 
 
-
     //HELPER METHODS - TILE GRID NAVIGATION
 
-    /**Returns the tile position nearest to the given world coordinates */
-    getTileCoordinatesFromWorldCoordinates(xPosition, yPosition){
+
+    isValidTileIndex(x, y){
+        return (x >= 0 && x < this.width && y >=0 && y < this.height)
+    }
+
+    /** Returns a copy of the tile in the give position */
+    getTileFromWorldCoordinates(xPosition, yPosition){
         let x = Math.floor(xPosition / this.tileSize);
         let y = Math.floor(yPosition / this.tileSize);
 
-        return {x: x, y: y};
+        if (this.isValidTileIndex(x,y)){
+            return this.tiles[x][y];
+        }
+    }
+
+    /**Returns the tile position nearest to the given world coordinates */
+    getTileIndexFromWorldCoordinates(xPosition, yPosition){
+        let x = Math.floor(xPosition / this.tileSize);
+        let y = Math.floor(yPosition / this.tileSize);
+
+        if (this.isValidTileIndex(x,y)){
+            return {x: x, y: y};
+        }
     }
 
     /**Returns the world coordinates that are snapped to the nearest tile. */
     getSnappedWorldCoordinates(xPosition, yPosition){
-        let coords = this.getTileCoordinatesFromWorldCoordinates(xPosition, yPosition);
+        let coords = this.getTileIndexFromWorldCoordinates(xPosition, yPosition);
         return this.tiles[coords.x][coords.y].position;
     }
 
-    /**returns a random tile position in the grid */
+    /**returns a random, walkable, tile position in the grid */
     getRandomTile(){
-        return {x: Math.floor(Math.random() * this.width), y: Math.floor(Math.random() * this.height)}
+
+        let x = 0;
+        let y = 0;
+
+        do {
+            x = Math.floor(Math.random() * this.width);
+            y = Math.floor(Math.random() * this.height);
+        }while (this.tiles[x][y].type == TileTypes.WALL)
+        
+        return {x: x, y: y}
     }
 
 

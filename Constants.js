@@ -3,7 +3,10 @@
  */
 
 //GLOBAL
-const TILESIZE = 20; // the size of a tile on the grid, in pixels
+/** the size of a tile on the grid, in pixels */
+const TILESIZE = 20; 
+/** the time in milliseconds it takes for a turn to resolve */
+const TURN_TIME = 100;
 
 //PLAYER
 const PLAYER_HEALTH = 5;

@@ -16,12 +16,6 @@ class Player extends MoveableEntity{
 
     // draw the player on the canvas
     draw(ctx){
-        // canvas.beginPath();
-        // canvas.arc(this.xPosition, this.yPosition, 10, 0, Math.PI * 2);
-        // canvas.fillStyle = "#0095DD";
-        // canvas.fill();
-        // canvas.closePath();
-
         ctx.beginPath();
         ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);
         ctx.fillStyle = "#0095DD";
@@ -38,6 +32,10 @@ class Player extends MoveableEntity{
             this.gold += other.getValue();
             console.log(this.gold);
         }
+    }
+
+    update(dt){
+        super.update(dt);
     }
 
     

@@ -24,5 +24,9 @@ class Enemy extends MoveableEntity{
         console.log('attack!!')
     }
 
+    update(dt){
+        super.update(dt);
+    }
+
 
 }

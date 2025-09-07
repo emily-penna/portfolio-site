@@ -35,14 +35,14 @@
 
 
   <body>
-    <canvas id="myCanvas" width="480" height="480"></canvas>
+    <canvas id="myCanvas" width="300" height="300"></canvas>
 
     <script>
       // JavaScript code goes here
         const canvas = document.getElementById("myCanvas");
         const ctx = canvas.getContext("2d");
-
         const game = new GameController(canvas.width, canvas.height);
+        let startTime = Date.now();
 
         function drawLives() {
           ctx.font = "16px Arial";
@@ -59,12 +59,19 @@
       }
 
       function update() {
-        game.update(currentInput);
+        let frameTime = Date.now()
+        let deltaTime = frameTime - startTime;
+        let framerate = (1/(deltaTime)) * 1000;
+        startTime = frameTime;
+        console.log(deltaTime);
+
+        game.update(deltaTime, currentInput);
         draw()
       }
 
       // call the update every 10 ms  
       setInterval(update, 10);
+
 
 
     </script>

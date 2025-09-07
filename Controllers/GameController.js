@@ -11,7 +11,8 @@ class GameController {
     enemies; // EnemyController: manages all enemies on the current floor.
     treasure; // TreasureController: manages all treasure on the current floor.
     player; // PlayerModel: player character. Controlled by the user.
-    grid; //Grid: contains the tilemap. Dictates where entities can move.
+    /** Grid: contains the tilemap. Dictates where entities can move.*/
+    grid; 
 
     // Possible game states.
     GameState = Object.freeze(
@@ -27,6 +28,9 @@ class GameController {
 
     // the current floor/level. Affects tile map generation.
     currentFloor = 1;
+
+    // the time elapsed in the current turn;
+    elapsedTime = 0;
     
 
     // width: game canvas width
@@ -50,13 +54,14 @@ class GameController {
         this.setUpNewFloor();
     }
 
-    update(input) {
+    update(dt, input) {
         // Read player input
         this.currentInput = input;
 
         // console.log(this.state);
         switch(this.state){
             case this.GameState.AWAITING_INPUT:
+                this.elapsedTime = 0;
                 //If we receive a new player input
                 if (this.currentInput != Directions.NONE){
                     // move the player in the corresponding direction
@@ -84,15 +89,16 @@ class GameController {
             // wait for all movement & animations to resolve before allowing next player input.
             case this.GameState.RESOLVING_INPUT:
             case this.GameState.PROGRESSING_FLOOR:
-                if (currentInput == Directions.NONE){
+                this.elapsedTime += dt;
+                if (this.elapsedTime >= TURN_TIME){
                     this.state = this.GameState.AWAITING_INPUT;
                 }
                 break;
         }
 
-        this.treasure.update();
-        this.enemies.update();
-        this.player.update();
+        this.treasure.update(dt);
+        this.enemies.update(dt);
+        this.player.update(dt);
 
     }
 
@@ -114,8 +120,8 @@ class GameController {
 
         this.grid.generateFloor();
         this.player.setPosition(this.grid.getPlayerStart().x, this.grid.getPlayerStart().y);
-        this.enemies.spawnEnemies(this.grid);   
-        this.treasure.spawnTreasure(this.grid);           
+        // this.enemies.spawnEnemies(this.grid);   
+        // this.treasure.spawnTreasure(this.grid);           
     }
 
 }

@@ -24,26 +24,88 @@ class MoveableEntity extends Entity{
     health; 
     //Number, how many tiles the obj can move per turn
     speed;
+
+    /**Number, x Position before the lerp. */
+    previousX;
+    /**Number, y Position before the lerp. */
+    previousY;
+
+    /**Number, Target x position. Allow for lerping between current to target */
+    targetX;
+    /**Number, Target y position. Allow for lerping between current to target */
+    targetY;
+
+    /** time elapsed since the start of the interpolation */
+    elapsedTime;
+    /** At what point in the turn time should the movement interpolation be complete. value between 0-1 */
+    interpolationTime = 0.5;
   
     constructor(health, speed, x = 0, y = 0){
         super(x, y);
         this.health = health;
         this.speed = speed;
+
+        this.targetX = this.previousX = x;
+        this.targetY = this.previousY = y;
     }
 
     //update the current position by the movement direction.
     move(direction){
+        //snap to the target position
+        this.xPosition = this.targetX;
+        this.yPosition = this.targetY;
+        //Save the previous position. Reset interpolation parameters.
+        this.previousX = this.xPosition;
+        this.previousY = this.yPosition;
+        this.elapsedTime = 0;
+
+        
         switch (direction){
             case Directions.UP:    
             case Directions.DOWN:
             case Directions.RIGHT:
             case Directions.LEFT:
-                this.xPosition += direction.dx * this.speed * TILESIZE;
-                this.yPosition += direction.dy * this.speed * TILESIZE;
+                this.targetX = this.xPosition + (direction.dx * this.speed * TILESIZE);
+                this.targetY = this.yPosition + (direction.dy * this.speed * TILESIZE);
             break;
             default:
                 throw new Error("invalid direction")
 
+        }
+    }
+
+    setPosition(x, y){
+        super.setPosition(x,y);
+        this.targetX = this.previousX = x;
+        this.targetY = this.previousY = y;
+    }
+
+    /** lerp the current position towards the target position */
+    update(dt){
+        // instant
+        // if (this.xPosition != this.targetX){
+        //     this.xPosition = this.targetX;
+        // }
+        // if (this.yPosition != this.targetY){
+        //     this.yPosition = this.targetY;
+        // }
+
+        //linear interpolation
+        this.elapsedTime += dt;
+        // ensure alpha does not exceed 1;
+        let alpha = Math.min(this.elapsedTime / (TURN_TIME * this.interpolationTime), 1);
+        if (Math.abs(this.xPosition - this.targetX) > 0.1){
+            this.xPosition = (1-alpha)*this.previousX + alpha * this.targetX;
+        } else {
+            // snap to target if approximately equal
+            this.xPosition = this.targetX;
+        }
+
+        if (Math.abs(this.yPosition - this.targetY) > 0.1){
+            this.yPosition = (1-alpha)*this.previousY + alpha * this.targetY;
+        } else {
+            //snap to target if approximately equal
+            this.yPosition = this.targetY;
         }
     }
 
