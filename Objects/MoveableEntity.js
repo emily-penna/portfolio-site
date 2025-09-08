@@ -14,6 +14,7 @@ const Directions = Object.freeze(
 );
 
 
+
 /**
  * Public class for a MovableObject.
  * A moveable object is an entity that can update its position.
@@ -41,10 +42,19 @@ class MoveableEntity extends Entity{
     /** At what point in the turn time should the movement interpolation be complete. value between 0-1 */
     interpolationTime = 0.6;
 
+    // BOUNCE BACK
     /** The current direction headed, used to recalculate target if running into wall */
     currentDirection;
     /** How far this entity is pushed into the wall on a bounce back */
     slamFactor = 0.1;
+
+    // FALLING
+    /** if we are currently falling */
+    isFalling = false;
+    /** texture size */
+    size = TILESIZE;
+    /** starting size, used for interpolation calculations */
+    startingSize;
   
     constructor(health, speed, x = 0, y = 0){
         super(x, y);
@@ -53,6 +63,8 @@ class MoveableEntity extends Entity{
 
         this.targetX = this.previousX = x;
         this.targetY = this.previousY = y;
+
+        this.startingSize = this.size;
     }
 
     //update the current position by the movement direction.
@@ -96,6 +108,14 @@ class MoveableEntity extends Entity{
         this.previousY = this.yPosition;
     }
 
+    /** Move to target, then fall (shrink texture over time) */
+    setFall(){
+        this.isFalling = true;
+        this.xPosition = this.previousX = this.targetX;
+        this.yPosition = this.previousY = this.targetY;
+        this.startingSize = this.size;
+    }
+
     setPosition(x, y){
         super.setPosition(x,y);
         this.targetX = this.previousX = x;
@@ -110,21 +130,31 @@ class MoveableEntity extends Entity{
         // ensure alpha does not exceed 1;
         let alpha = Math.min(this.elapsedTime / (TURN_TIME * this.interpolationTime), 1);
 
-
-        if (!approximatelyEqual(this.xPosition, this.targetX, 0.1)){
-            this.xPosition = (1-alpha)*this.previousX + alpha * this.targetX;
+        if (this.isFalling){
+            if (!approximatelyEqual(this.size, 0, 0.1)){
+                this.size = (1-(alpha))*this.startingSize; // progress the size towards 0
+                this.xPosition = this.previousX + alpha*this.startingSize*0.5
+                this.yPosition = this.previousY + alpha*this.startingSize*0.5
+            } else {
+                this.size = 0;
+                this.isFalling = false;
+            }
         } else {
-            // snap to target if approximately equal
-            this.xPosition = this.targetX;
-        }
+            if (!approximatelyEqual(this.xPosition, this.targetX, 0.1)){
+                this.xPosition = (1-alpha)*this.previousX + alpha * this.targetX;
+            } else {
+                // snap to target if approximately equal
+                this.xPosition = this.targetX;
+            }
 
-        if (!approximatelyEqual(this.yPosition, this.targetY, 0.1)){
-            this.yPosition = (1-alpha)*this.previousY + alpha * this.targetY;
-        } else {
-            //snap to target if approximately equal
-            this.yPosition = this.targetY;
+            if (!approximatelyEqual(this.yPosition, this.targetY, 0.1)){
+                this.yPosition = (1-alpha)*this.previousY + alpha * this.targetY;
+            } else {
+                //snap to target if approximately equal
+                this.yPosition = this.targetY;
+            }
         }
-
+        
     }
 
     

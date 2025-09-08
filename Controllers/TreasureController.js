@@ -6,6 +6,7 @@ class TreasureController{
     
     /** Array of all the treasure on the current floor. */
     treasure;
+    spawnRate = 0.75; // the rate of how many treasures should be spawned, as a function of the current floor.
 
     constructor() {
         this.treasure = [];
@@ -13,11 +14,11 @@ class TreasureController{
     
     // creates new enemies and adds them to the enemy list.
     // needs a reference to the map unfortunately... to make sure enemies spawn on tiles.
-    spawnTreasure(grid) {
+    spawnTreasure(grid, floor) {
         this.treasure = [];
 
-        for (let i = 0; i < 5; i++){
-            let coords = grid.getSnappedWorldCoordinates(20, 20+i*50);
+        for (let i = 1; i < floor * this.spawnRate; i++){
+            let coords = grid.getRandomSnappedWorldPosition()
             let t = new Treasure(coords.x, coords.y);
             this.treasure.push(t);
         }

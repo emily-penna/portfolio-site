@@ -6,9 +6,9 @@
 TileTypes = Object.freeze(
     {
         FLOOR: {name: "floor", walkable: true, color: "brown"},  
-        HOLE: {name: "hole", walkable: false, color: "black"},
+        HOLE: {name: "hole", walkable: true, color: "black"},
         STAIRS: {name: "stairs", walkable: true, color: "blue"},
-        START: {name: "start", walkable: true, color: "yellow"},
+        START: {name: "start", walkable: true, color: "gray"},
         WALL: {name: "wall", walkable: false, color: "navy"}
 
     }

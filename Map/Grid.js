@@ -89,6 +89,9 @@ class Grid {
         
         this.setRandomTile(TileTypes.HOLE)
         this.setRandomTile(TileTypes.HOLE)
+        this.setRandomTile(TileTypes.HOLE)
+        this.setRandomTile(TileTypes.HOLE)
+        this.setRandomTile(TileTypes.HOLE)
 
         //Set one tile to be the player spawn.
         this.startTile = this.setRandomTile(TileTypes.START)
@@ -126,6 +129,7 @@ class Grid {
     debugDraw(ctx){
 
         ctx.beginPath();
+        ctx.strokeStyle ="white";
 
         // draw horizontal grid lines
         for (let r = 0; r < this.height; r++){
@@ -135,8 +139,8 @@ class Grid {
 
         // draw vertical grid lines
         for (let c = 0; c < this.width; c++){
-        ctx.moveTo(c * this.tileSize, 0);
-        ctx.lineTo(c * this.tileSize, this.canvasHeight) 
+            ctx.moveTo(c * this.tileSize, 0);
+            ctx.lineTo(c * this.tileSize, this.canvasHeight) 
         }
         ctx.stroke();
 
@@ -237,7 +241,7 @@ class Grid {
         do {
             x = Math.floor(Math.random() * this.width);
             y = Math.floor(Math.random() * this.height);
-        }while (this.tiles[x][y].type == TileTypes.WALL)
+        }while (!this.tiles[x][y].isWalkable())
         
         return {x: x, y: y}
     }

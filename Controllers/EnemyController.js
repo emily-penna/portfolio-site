@@ -8,6 +8,7 @@
 class EnemyController {
 
     enemies; // array of all enemies on the current floor.
+    spawnRate = 2; // the rate of how many enemies should be spawned, as a function of the current floor.
 
     constructor() {
         this.enemies = [];
@@ -15,9 +16,9 @@ class EnemyController {
     
     // creates new enemies and adds them to the enemy list.
     // needs a reference to the map unfortunately... to make sure enemies spawn on tiles.
-    spawnEnemies(grid) {
+    spawnEnemies(grid, floor) {
         this.enemies = []
-        for (let i = 0; i < 2; i++){
+        for (let i = 1; i < floor * this.spawnRate; i++){
             let coords = grid.getRandomSnappedWorldPosition()
             let e = new Enemy(5, 1, 1, coords.x, coords.y);
             this.enemies.push(e);
@@ -25,6 +26,8 @@ class EnemyController {
     }
 
     update(dt){
+        this.enemies = this.enemies.filter(e => e.size > 0);
+
         this.enemies.forEach(e => {
             e.update(dt);
         });

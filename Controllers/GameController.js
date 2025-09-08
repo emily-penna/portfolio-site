@@ -26,7 +26,7 @@ class GameController {
     state; //GameState: current game state.
     currentInput = Directions.NONE; //The last read user input.
 
-    // the current floor/level. Affects tile map generation.
+    // the current floor/level. Affects tile map generation and entity spawns.
     currentFloor = 1;
 
     // the time elapsed in the current turn;
@@ -81,11 +81,14 @@ class GameController {
                     } else {
                         this.state = this.GameState.RESOLVING_INPUT;
 
-                        // move all enemies
+                        // Move all enemies
                         this.enemies.move(this.grid);
-                        //TODO: check for collisions
+                        // Check for collisions
                         CollisionController.resolveCollisions(this.player, this.enemies.enemies);
-                        // CollisionController.resolveCollisions(this.player, this.treasure.treasure);
+                        CollisionController.resolveCollisions(this.player, this.treasure.treasure);
+                        CollisionController.resolveTileHazardCollisions(this.grid, this.player);
+                        CollisionController.resolveTileHazardCollisions(this.grid, this.enemies.enemies);
+                        console.log(this.enemies.enemies.length)
 
                     }
                 }
@@ -96,6 +99,7 @@ class GameController {
             case this.GameState.PROGRESSING_FLOOR:
                 this.elapsedTime += dt;
                 if (this.elapsedTime >= TURN_TIME){
+                    this.checkGameOver();
                     this.state = this.GameState.AWAITING_INPUT;
                 }
                 break;
@@ -125,8 +129,17 @@ class GameController {
 
         this.grid.generateFloor();
         this.player.setPosition(this.grid.getPlayerStart().x, this.grid.getPlayerStart().y);
-        this.enemies.spawnEnemies(this.grid);   
-        // this.treasure.spawnTreasure(this.grid);           
+        this.enemies.spawnEnemies(this.grid, this.currentFloor);   
+        this.treasure.spawnTreasure(this.grid, this.currentFloor);           
+    }
+
+    checkGameOver(){
+        if (this.player.health <= 0){
+            console.log("Gameover!")
+            this.player.reset();
+            this.currentFloor = 1;
+            this.setUpNewFloor();
+        }
     }
 
 }

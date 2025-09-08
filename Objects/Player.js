@@ -14,10 +14,17 @@ class Player extends MoveableEntity{
         this.gold = 0;
     }
 
+    /** return all variables to their default value. */
+    reset(){
+        this.gold =- 0
+        this.health = PLAYER_HEALTH;
+        this.size = this.startingSize;
+    }
+
     // draw the player on the canvas
     draw(ctx){
         ctx.beginPath();
-        ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);
+        ctx.rect(this.xPosition, this.yPosition, this.size, this.size);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();  
@@ -32,6 +39,10 @@ class Player extends MoveableEntity{
         else if (other instanceof Treasure){
             this.gold += other.getValue();
             console.log(this.gold);
+        } 
+        else if (other == TileTypes.HOLE){ 
+            this.health = 0;   
+            this.setFall()    
         }
     }
 

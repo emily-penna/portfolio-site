@@ -17,7 +17,7 @@ class CollisionController {
                 }
             }
             else {
-                if (entity.xPosition == e.xPosition && entity.yPosition == e.yPosition){
+                if (entity.targetX == e.xPosition && entity.targetY == e.yPosition){
                     entity.onCollision(e);
                     e.onCollision(entity);
                 }
@@ -25,5 +25,29 @@ class CollisionController {
             
             
         })
+    }
+
+
+    /** resolve collisions between moveable entities and the tile they are standing on */
+    static resolveTileHazardCollisions(grid, other){
+
+        // singleton collision
+        if (other instanceof MoveableEntity){
+            if (grid.getTileFromWorldCoordinates(other.targetX, other.targetY).type == TileTypes.HOLE){
+                other.onCollision(TileTypes.HOLE);
+            }
+        } 
+        // list of entities collisions
+        else {
+            other.forEach(e => {
+            if (grid.getTileFromWorldCoordinates(e.targetX, e.targetY).type == TileTypes.HOLE){
+                e.onCollision(TileTypes.HOLE);
+            }
+        })
+
+        }
+
+        
+
     }
 }
