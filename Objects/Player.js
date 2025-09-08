@@ -27,6 +27,7 @@ class Player extends MoveableEntity{
         if (other instanceof Enemy){
             this.health -= other.power;
             console.log(this.health);
+            this.setBounceBack();
         } 
         else if (other instanceof Treasure){
             this.gold += other.getValue();

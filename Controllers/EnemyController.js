@@ -16,8 +16,9 @@ class EnemyController {
     // creates new enemies and adds them to the enemy list.
     // needs a reference to the map unfortunately... to make sure enemies spawn on tiles.
     spawnEnemies(grid) {
-        for (let i = 0; i < 5; i++){
-            let coords = grid.getSnappedWorldCoordinates(20+i*100, 50);
+        this.enemies = []
+        for (let i = 0; i < 2; i++){
+            let coords = grid.getRandomSnappedWorldPosition()
             let e = new Enemy(5, 1, 1, coords.x, coords.y);
             this.enemies.push(e);
         }
@@ -37,9 +38,14 @@ class EnemyController {
     }
 
     /**move all enemies once */
-    move(){
+    move(grid){
         this.enemies.forEach(e => {
             e.move(this.getRandomDirection());
+
+            if(!grid.IsProspectivePositionWalkable(e)){
+                e.setBounceBack();
+            }
+            
         });
     }
 

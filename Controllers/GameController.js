@@ -82,10 +82,10 @@ class GameController {
                         this.state = this.GameState.RESOLVING_INPUT;
 
                         // move all enemies
-                        // this.enemies.move();
+                        this.enemies.move(this.grid);
                         //TODO: check for collisions
                         CollisionController.resolveCollisions(this.player, this.enemies.enemies);
-                        CollisionController.resolveCollisions(this.player, this.treasure.treasure);
+                        // CollisionController.resolveCollisions(this.player, this.treasure.treasure);
 
                     }
                 }
@@ -125,7 +125,7 @@ class GameController {
 
         this.grid.generateFloor();
         this.player.setPosition(this.grid.getPlayerStart().x, this.grid.getPlayerStart().y);
-        // this.enemies.spawnEnemies(this.grid);   
+        this.enemies.spawnEnemies(this.grid);   
         // this.treasure.spawnTreasure(this.grid);           
     }
 

@@ -5,14 +5,25 @@
 
 class CollisionController {
 
-    /** Resolve any collisions between a single entity and a group. */
+    /** Resolve any collisions between a single moveable entity and a group of entities. */
     static resolveCollisions(entity, entities){
-        
+
         entities.forEach(e => {
-            if (entity.xPosition == e.xPosition && entity.yPosition == e.yPosition){
-                entity.onCollision(e);
-                e.onCollision(entity);
+
+            if (e instanceof MoveableEntity){
+                if (entity.targetX == e.targetX && entity.targetY == e.targetY){
+                    entity.onCollision(e);
+                    e.onCollision(entity);
+                }
             }
+            else {
+                if (entity.xPosition == e.xPosition && entity.yPosition == e.yPosition){
+                    entity.onCollision(e);
+                    e.onCollision(entity);
+                }
+            }
+            
+            
         })
     }
 }

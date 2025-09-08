@@ -50,23 +50,34 @@ class Grid {
 
         //create circular border around the walkable floor.
         this.radius = Math.min(height, width)/2;
-        let circ = (2 * Math.PI * this.radius);
+        // right isosceles triangle, furthest point is radical 2 * radius
+        // Can alter the max position to change the thickness of tower wall.
+        // Potentially add a sky texture past the wall?
+        // let maxPos = Math.pow(2, 0.5)* Math.max(height,width)/2;
+        let maxPos = Math.pow(2, 0.5)*this.radius;
 
         // walk around the circumference of a circle
         for (let theta = 0; theta <= 360; theta++){
             let radians = theta * Math.PI/180;
-            let x = this.radius * Math.cos(radians);
-            let y = this.radius * Math.sin(radians);
+            //walk from the radius onwards.
+            for(let r = this.radius; r <= maxPos; r++){
+                
+                let x = r * Math.cos(radians);
+                let y = r * Math.sin(radians);
 
-            // calculations need to consider the offset of the center not being at 0,0
-            x = x + this.canvasWidth/2
-            y = y + this.canvasHeight/2
+                // calculations need to consider the offset of the center not being at 0,0
+                x = x + this.canvasWidth/2
+                y = y + this.canvasHeight/2
 
-            let tile = this.getTileIndexFromWorldCoordinates(x, y)
-            if (tile){
-                this.tiles[tile.x][tile.y].setType(TileTypes.WALL);
-            } 
-
+                let tile = this.getTileIndexFromWorldCoordinates(x, y)
+                if (tile){
+                    this.tiles[tile.x][tile.y].setType(TileTypes.WALL);
+                } else {
+                    // cut walking around the radius early if we already hit out of bounds
+                    break;
+                }
+            }
+            
         }
 
     }
@@ -75,8 +86,6 @@ class Grid {
     /** Randomly generate the tile map of the current game floor.*/
     generateFloor(){
         this.clearFloor();
-        //Set one tile to be the stairs:
-        this.tiles[this.width - 3][3].setType(TileTypes.STAIRS)
         
         this.setRandomTile(TileTypes.HOLE)
         this.setRandomTile(TileTypes.HOLE)
@@ -85,7 +94,7 @@ class Grid {
         this.startTile = this.setRandomTile(TileTypes.START)
 
         //Set one tile to be the stairs:
-        this.tiles[this.width - 3][3].setType(TileTypes.STAIRS)
+        this.setRandomTile(TileTypes.STAIRS)
     }
 
     /** Reset all of the tiles to their default settings */
@@ -159,7 +168,7 @@ class Grid {
 
     /** Set a random tile in the grid to the given type */
     setRandomTile(type){
-        let pos = this.getRandomTile();
+        let pos = this.getRandomTilePosition();
         this.tiles[pos.x][pos.y].setType(type);
         return this.tiles[pos.x][pos.y];
     }   
@@ -169,7 +178,11 @@ class Grid {
 
     //HELPER METHODS - TILE GRID NAVIGATION
 
-    /** Returns true if the given world position cooresponds to a valid walkable tile. */
+    /** 
+     * @param {number} x the x world position.
+     * @param {number} y the y world position.
+     * @returns {boolean} Returns true if the given world position cooresponds to a valid walkable tile. 
+     */
     IsTileWalkable(x, y){
         let tile = this.getTileFromWorldCoordinates(x, y)
 
@@ -216,7 +229,7 @@ class Grid {
     }
 
     /**returns a random, non-wall, tile position in the grid */
-    getRandomTile(){
+    getRandomTilePosition(){
 
         let x = 0;
         let y = 0;
@@ -227,6 +240,18 @@ class Grid {
         }while (this.tiles[x][y].type == TileTypes.WALL)
         
         return {x: x, y: y}
+    }
+
+    getWorldPositionFromTileIndex(x, y){
+        if (this.isValidTileIndex(x,y)){
+            return {x: this.tiles[x][y].xPosition, y: this.tiles[x][y].yPosition}
+        }
+    }
+
+    getRandomSnappedWorldPosition(){
+        let pos = this.getRandomTilePosition()
+        let tile = this.tiles[pos.x][pos.y];
+        return {x: tile.xPosition, y: tile.yPosition}
     }
 
 
