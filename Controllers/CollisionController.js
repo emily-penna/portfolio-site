@@ -20,6 +20,12 @@ class CollisionController {
                     entity.onCollision(e);
                     e.onCollision(entity);
                 }
+                // phase through
+                else if ((entity.targetX == e.xPosition && entity.targetY == e.yPosition) && (e.targetX == entity.xPosition && e.targetY == entity.yPosition)){
+                    console.log("Phase through!!")
+                    entity.onCollision(e);
+                    e.onCollision(entity);
+                }
             }
             else {
                 if (entity.targetX == e.xPosition && entity.targetY == e.yPosition){

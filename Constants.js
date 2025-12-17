@@ -4,13 +4,13 @@
 
 //GLOBAL
 /** the size of a tile on the grid, in pixels */
-const TILESIZE = 15; 
+const TILESIZE = 20; 
 /** the time in milliseconds it takes for a turn to resolve */
 const TURN_TIME = 200;
 
 //PLAYER
 /** The starting hit points of the player */
-const PLAYER_HEALTH = 5;
+const PLAYER_HEALTH = 500;
 /** The number of tiles the player moves with an input. */
 const PLAYER_SPEED = 1;
 

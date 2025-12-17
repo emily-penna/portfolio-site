@@ -84,6 +84,12 @@ class MoveableEntity extends Entity{
         this.interpolationTime = 0.5;
 
         // BOUNCE BACK
+        /**
+         * Whether the entity is already within a bounce back.
+         * @type {boolean}
+         */
+        this.isBouncingBack = false;
+
         /** 
          * The current direction headed, used to recalculate target if running into wall 
          * @type {Number}
@@ -127,11 +133,12 @@ class MoveableEntity extends Entity{
     }
 
     /**
-     * update the current position by the movement direction.
+     * update the target position by the movement direction.
      * @param {Directions} direction 
      */
     move(direction){
 
+        this.isBouncingBack = false;
         //snap to the target position for safety.
         this.xPosition = this.targetX;
         this.yPosition = this.targetY;
@@ -159,17 +166,27 @@ class MoveableEntity extends Entity{
      * On a bounce back, Move to entity target, then back to original position
      */
     setBounceBack(){
-        // how far the player is pushed into the wall
-        this.targetX = this.xPosition + (this.currentDirection.dx * this.speed * TILESIZE) * this.slamFactor;
-        this.targetY = this.yPosition + (this.currentDirection.dy * this.speed * TILESIZE) * this.slamFactor;
 
-        // reverse the flow of movement.
-        this.xPosition = this.targetX;
-        this.yPosition = this.targetY;
-        this.targetX = this.previousX;
-        this.targetY = this.previousY;
-        this.previousX = this.xPosition;
-        this.previousY = this.yPosition;
+        if (!this.isBouncingBack){
+            this.isBouncingBack = true;
+
+            // how far the player is pushed into the wall
+            this.targetX = this.xPosition + (this.currentDirection.dx * this.speed * TILESIZE) * this.slamFactor;
+            this.targetY = this.yPosition + (this.currentDirection.dy * this.speed * TILESIZE) * this.slamFactor;
+
+            // reverse the flow of movement.
+            this.xPosition = this.targetX;
+            this.yPosition = this.targetY;
+            this.targetX = this.previousX;
+            this.targetY = this.previousY;
+            this.previousX = this.xPosition;
+            this.previousY = this.yPosition;
+        }
+        else {
+            // console.log("already returning to original position!")
+        }
+        
+        
     }
 
     /** 

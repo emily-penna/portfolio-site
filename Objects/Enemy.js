@@ -42,7 +42,9 @@ class Enemy extends MoveableEntity{
     onCollision(other){
         if (other instanceof Player){
             //damage dealing is handled by the player
+            //enemies do not bounce back on collision with the player. 
             console.log('attack!!')
+            this.setBounceBack();
         }
         else if (other == TileTypes.HOLE){
             this.setFall();
