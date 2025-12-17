@@ -5,11 +5,16 @@
 
 class CollisionController {
 
-    /** Resolve any collisions between a single moveable entity and a group of entities. */
+    /**
+     * Resolve any collisions between a single moveable entity and a group of entities.
+     * @param {Entity} entity 
+     * @param {Entity[]} entities 
+     */
     static resolveCollisions(entity, entities){
 
         entities.forEach(e => {
 
+            // if the entity is moving, compare target locations.
             if (e instanceof MoveableEntity){
                 if (entity.targetX == e.targetX && entity.targetY == e.targetY){
                     entity.onCollision(e);
@@ -28,7 +33,11 @@ class CollisionController {
     }
 
 
-    /** resolve collisions between moveable entities and the tile they are standing on */
+    /**
+     * resolve collisions between moveable entities and the tile they are standing on
+     * @param {Grid} grid 
+     * @param {Entity | Entity[]} other 
+     */
     static resolveTileHazardCollisions(grid, other){
 
         // singleton collision

@@ -1,9 +1,9 @@
-/***
- * Represents a tile in the map grid.
- */
-
-// Possible tile types.
-TileTypes = Object.freeze(
+/** 
+ * All Possible tile types and their attributes 
+ * @readonly
+ * @enum {{name: string, walkable: boolean, color: string}}
+ * */
+const TileTypes = Object.freeze(
     {
         FLOOR: {name: "floor", walkable: true, color: "brown"},  
         HOLE: {name: "hole", walkable: true, color: "black"},
@@ -14,23 +14,44 @@ TileTypes = Object.freeze(
     }
 );
 
+/**
+ * Represents a tile in the map grid.
+ */
 class Tile {
 
-    //Type of the tile. Dictates its behavior when interacted with by an Entity.
-    type;
-
-    //Tile positions originate in the top left corner of the tile.
-    //Number, x Coordinate of the current tile. In world coordinates. constant.
-    xPosition;
-    //Number, y Coordinate of the current tile. In world coordinates. constant.
-    yPosition;
-
-    //World position:
-    position;
-
-
     constructor(x, y, type = TileTypes.FLOOR) {
+
+        // START VARIABLE DECLARATIONS -------------------------------
+
+        /**
+         * Type of the tile. Dictates its behavior when interacted with by an Entity.
+         * @type {TileTypes}
+         * */
+        this.type;
+
+        //Tile positions originate in the top left corner of the tile.
+        /**
+         * x Coordinate of the current tile. In world coordinates. constant.
+         * @type {Number}
+         * */
+        this.xPosition;
+
+        /**
+         * y Coordinate of the current tile. In world coordinates. constant.
+         * @type {Number}
+         * */
+        this.yPosition;
+
+        /**
+         * World position, as coordinates
+         * @type {{x: Number, y: Number}}
+         * */
+        this.position
+
+        // END VARIABLE DECLARATIONS ---------------------------------
+
         this.type = type;
+        
         this.xPosition = x;
         this.yPosition = y;
 
@@ -38,14 +59,26 @@ class Tile {
         
     }
 
+    /**
+     * Change the type of the tile to the given type
+     * @param {TileTypes} type 
+     */
     setType(type){
         this.type = type;
     }
 
+    /**
+     * Returns true if Tile allows an entity to walk upon it
+     * @returns {boolean}
+     */
     isWalkable(){
         return this.type.walkable;
     }
 
+    /**
+     * Draw all of the tiles in the grid
+     * @param {CanvasRenderingContext2D} ctx 
+     */
     draw(ctx){
         ctx.beginPath();
         ctx.rect(this.xPosition, this.yPosition, TILESIZE, TILESIZE);

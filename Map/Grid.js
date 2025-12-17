@@ -4,28 +4,73 @@
 
 class Grid {
 
-    /**Number, the width in pixels of the canvas */
-    canvasWidth;
-    /**Number, the height in pixels of the canvas */
-    canvasHeight;
-
-    /**Number, the number of pixels wide each tile of the grid will be */
-    tileSize;
-    /**Number, the height in tiles of the canvas */
-    height; 
-    /**Number, the width in tiles of the canvas */
-    width;
-    /**Number, the radius in pixels of the playable area */
-    radius;
-
-    /** n x n matrix of tile objects.*/
-    tiles;
-
-    /**Reference to the starttile */
-    startTile;
-
-
+    /**
+     * Create a grid of tiles.
+     * @param {Number} width the width in pixels of the canvas
+     * @param {Number} height the height in pixels of the canvas
+     * @param {Number} tileSize the size of a tile on the grid, in pixels
+     */
     constructor(width, height, tileSize){
+
+        // START VARIABLE DECLARATIONS ---------------------------------
+
+        /**
+         * the width in pixels of the canvas
+         * @type {number}
+         * */
+        this.canvasWidth;
+
+        /**
+         * the height in pixels of the canvas 
+         * @type {number}
+         * */
+        this.canvasHeight;
+
+        /**
+         * the number of pixels wide each tile of the grid will be 
+         * @type {number}
+         * */
+        this.tileSize;
+
+        /**
+         * the height in tiles of the canvas 
+         * @type {number}
+         * */
+        this.height; 
+
+        /**
+         * the width in tiles of the canvas 
+         * @type {number}
+         * */
+        this.width;
+
+        /**
+         * the radius in pixels of the playable area 
+         * @type {number}
+         * */
+        this.radius;
+
+        /**
+         * width x height matrix of tile objects.
+         * @type {number[][]}
+         * */
+        this.tiles;
+
+        /**
+         * Reference to the starttile, where the player spawns 
+         * @type {Tile}
+         * */
+        this.startTile;
+
+        /**
+         * the rate of how many hole tiles should be spawned, 
+         * as a function of the current floor. 
+         * @type {number}
+         * */
+        this.spawnRate = 2; 
+
+        // END VARIABLE DECLARATIONS ---------------------------------
+
         this.canvasWidth = width;
         this.canvasHeight = height;
         this.tileSize = tileSize;
@@ -83,15 +128,16 @@ class Grid {
     }
 
 
-    /** Randomly generate the tile map of the current game floor.*/
-    generateFloor(){
+    /**
+     * Randomly generate the tile map of the current game floor.
+     * @param {Number} floorNum The current floor of the room we are generating
+     */
+    generateFloor(floorNum){
         this.clearFloor();
         
-        this.setRandomTile(TileTypes.HOLE)
-        this.setRandomTile(TileTypes.HOLE)
-        this.setRandomTile(TileTypes.HOLE)
-        this.setRandomTile(TileTypes.HOLE)
-        this.setRandomTile(TileTypes.HOLE)
+        for (let i = 0; i < floorNum * this.spawnRate; i++){
+            this.setRandomTile(TileTypes.HOLE)
+        }
 
         //Set one tile to be the player spawn.
         this.startTile = this.setRandomTile(TileTypes.START)
@@ -100,7 +146,9 @@ class Grid {
         this.setRandomTile(TileTypes.STAIRS)
     }
 
-    /** Reset all of the tiles to their default settings */
+    /** 
+     * Reset all of the tiles to their default settings 
+     * */
     clearFloor(){
         for (let c = 0; c < this.width; c++){
             for (let r = 0; r < this.height; r++){
@@ -112,20 +160,25 @@ class Grid {
 
     }
 
-    /**Draw all of the tiles in the grid */
+    /**
+     * Draw all of the tiles in the grid
+     * @param {CanvasRenderingContext2D} ctx 
+     */
     draw(ctx){
 
         for (let c = 0; c < this.width; c++){
             for (let r = 0; r < this.height; r++){
                 this.tiles[c][r].draw(ctx);
                 // console.log(this.tiles[c][r])
-
             }
         }
 
     }
 
-    /**Draw the lines of the grid. and center dot */
+    /**
+     * Draw a line grid and circle of the playable area 
+     * @param {CanvasRenderingContext2D} ctx 
+     */
     debugDraw(ctx){
 
         ctx.beginPath();
@@ -159,18 +212,31 @@ class Grid {
 
     }
 
-    /**Returns true if the given movableEntity is projected to be on the stair tile. */
+ 
+    /**
+     * Returns true if the given movableEntity is projected to be on the stair tile.
+     * @param {Entity} entity 
+     * @returns {boolean}
+     */
     IsOnStairs(entity){
         let coords = this.getTileIndexFromWorldCoordinates(entity.targetX, entity.targetY);
         return this.tiles[coords.x][coords.y].type === TileTypes.STAIRS;
     }
 
-    /** Returns the player's start position */
+    
+    /**
+     * Returns the player's start position
+     * @returns {{x: Number, y: Number}}
+     */
     getPlayerStart(){
         return {x: this.startTile.position.x, y: this.startTile.position.y};
     }
 
-    /** Set a random tile in the grid to the given type */
+    /**
+     * Set a random tile in the grid to the given type
+     * @param {TileTypes} type 
+     * @returns {Tile}
+     */
     setRandomTile(type){
         let pos = this.getRandomTilePosition();
         this.tiles[pos.x][pos.y].setType(type);
@@ -183,9 +249,10 @@ class Grid {
     //HELPER METHODS - TILE GRID NAVIGATION
 
     /** 
+     * Returns true if the given world position cooresponds to a valid walkable tile. 
      * @param {number} x the x world position.
      * @param {number} y the y world position.
-     * @returns {boolean} Returns true if the given world position cooresponds to a valid walkable tile. 
+     * @returns {boolean} 
      */
     IsTileWalkable(x, y){
         let tile = this.getTileFromWorldCoordinates(x, y)
@@ -196,17 +263,31 @@ class Grid {
         return false;
     }
 
-    /** Returns true if the given moveable entities target position is valid and walkable. */
+    /**
+     * Returns true if the given moveable entities target position is valid and walkable. 
+     * @param {Entity} entity 
+     * @returns {boolean}
+     */
     IsProspectivePositionWalkable(entity){
         return this.IsTileWalkable(entity.targetX, entity.targetY)
     }
 
-    /** Returns true if giving index is within the generated group of tiles. */
+    /**
+     * Returns true if giving index is within the generated group of tiles.
+     * @param {Number} x 
+     * @param {Number} y 
+     * @returns {boolean}
+     */
     isValidTileIndex(x, y){
         return (x >= 0 && x < this.width && y >=0 && y < this.height)
     }
 
-    /** Returns a copy of the tile in the give position */
+    /**
+     * Returns a copy of the tile in the given position 
+     * @param {Number} xPosition 
+     * @param {Number} yPosition 
+     * @returns {Tile}
+     */
     getTileFromWorldCoordinates(xPosition, yPosition){
         let x = Math.floor(xPosition / this.tileSize);
         let y = Math.floor(yPosition / this.tileSize);
@@ -216,7 +297,13 @@ class Grid {
         }
     }
 
-    /**Returns the tile position nearest to the given world coordinates */
+    
+    /**
+     * Returns the tile position nearest to the given world coordinates
+     * @param {Number} xPosition 
+     * @param {Number} yPosition 
+     * @returns {{x: Number, y: Number}} grid indices
+     */
     getTileIndexFromWorldCoordinates(xPosition, yPosition){
         let x = Math.floor(xPosition / this.tileSize);
         let y = Math.floor(yPosition / this.tileSize);
@@ -226,13 +313,22 @@ class Grid {
         }
     }
 
-    /**Returns the world coordinates that are snapped to the nearest tile. */
+
+    /**
+     * Returns the world coordinates that are snapped to the nearest tile.
+     * @param {Number} xPosition 
+     * @param {Number} yPosition 
+     * @returns {{x: Number, y: Number}} world coordinates
+     */
     getSnappedWorldCoordinates(xPosition, yPosition){
         let coords = this.getTileIndexFromWorldCoordinates(xPosition, yPosition);
         return this.tiles[coords.x][coords.y].position;
     }
 
-    /**returns a random, non-wall, tile position in the grid */
+    /**
+     * Returns a random, non-wall, tile position in the grid 
+     * @returns {{x: Number, y: Number}} grid indices
+     */
     getRandomTilePosition(){
 
         let x = 0;
@@ -246,12 +342,10 @@ class Grid {
         return {x: x, y: y}
     }
 
-    getWorldPositionFromTileIndex(x, y){
-        if (this.isValidTileIndex(x,y)){
-            return {x: this.tiles[x][y].xPosition, y: this.tiles[x][y].yPosition}
-        }
-    }
-
+    /**
+     * Get the world coordiantes of a random tile on the grid
+     * @returns {{x: Number, y: Number}} world coordinates
+     */
     getRandomSnappedWorldPosition(){
         let pos = this.getRandomTilePosition()
         let tile = this.tiles[pos.x][pos.y];

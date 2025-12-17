@@ -14,50 +14,109 @@ const Directions = Object.freeze(
 );
 
 
-
 /**
  * Public class for a MovableObject.
  * A moveable object is an entity that can update its position.
  */
 class MoveableEntity extends Entity{
-
-    //Number, how much damage the obj can take before being destroyed
-    health; 
-    //Number, how many tiles the obj can move per turn
-    speed;
-
-    // INTERPOLATION PARAMETER
-    /**Number, x Position before the lerp. */
-    previousX;
-    /**Number, y Position before the lerp. */
-    previousY;
-
-    /**Number, Target x position. Allow for lerping between current to target */
-    targetX;
-    /**Number, Target y position. Allow for lerping between current to target */
-    targetY;
-
-    /** time elapsed since the start of the interpolation */
-    elapsedTime;
-    /** At what point in the turn time should the movement interpolation be complete. value between 0-1 */
-    interpolationTime = 0.6;
-
-    // BOUNCE BACK
-    /** The current direction headed, used to recalculate target if running into wall */
-    currentDirection;
-    /** How far this entity is pushed into the wall on a bounce back */
-    slamFactor = 0.1;
-
-    // FALLING
-    /** if we are currently falling */
-    isFalling = false;
-    /** texture size */
-    size = TILESIZE;
-    /** starting size, used for interpolation calculations */
-    startingSize;
   
+    /**
+     * Construct a Movable Entity
+     * @param {Number} health 
+     * @param {Number} speed 
+     * @param {Number} x 
+     * @param {Number} y 
+     */
     constructor(health, speed, x = 0, y = 0){
+
         super(x, y);
+
+        // START VARIABLE DECLARATIONS ------------------------------
+
+        /**
+         * How much damage the obj can take before being destroyed
+         * @type {Number}
+         */
+        this.health; 
+
+        /**
+         * How many tiles the obj can move per turn
+         * @type {Number}
+         */
+        this.speed;
+
+        // INTERPOLATION PARAMETERS
+
+        /**
+         * x Position before the lerp.
+         * @type {Number}
+         */
+        this.previousX;
+
+        /**
+         * y Position before the lerp.
+         * @type {Number}
+         */
+        this.previousY;
+
+        /**
+         * Target x position. Allow for lerping between current to target 
+         * @type {Number}
+         * */
+        this.targetX;
+
+        /**
+         * Target y position. Allow for lerping between current to target 
+         * @type {Number}
+         * */
+        this.targetY;
+
+        /** 
+         * time elapsed since the start of the interpolation 
+         * @type {Number}
+         * */
+        this.elapsedTime;
+
+        /** 
+         * At what point in the turn time should the movement interpolation be complete. 
+         * @type {Number} value between 0-1 
+         * */
+        this.interpolationTime = 0.5;
+
+        // BOUNCE BACK
+        /** 
+         * The current direction headed, used to recalculate target if running into wall 
+         * @type {Number}
+        */
+        this.currentDirection;
+
+        /** 
+         * How far this entity is pushed into the wall on a bounce back 
+         * @type {Number}
+         * */
+        this.slamFactor = 0.1;
+
+        // FALLING
+        /** 
+         * are we are currently falling 
+         * @type {boolean}
+         * */
+        this.isFalling = false;
+
+        /** 
+         * texture size, assuming texture is a square
+         * @type {Number}
+         * */
+        this.size = TILESIZE;
+
+        /** 
+         * starting size, used for falling interpolation calculations 
+         * @type {Number}
+         * */
+        this.startingSize;
+
+        // END VARIABLE DECLARATIONS -----------------------------------
+        
         this.health = health;
         this.speed = speed;
 
@@ -67,7 +126,10 @@ class MoveableEntity extends Entity{
         this.startingSize = this.size;
     }
 
-    //update the current position by the movement direction.
+    /**
+     * update the current position by the movement direction.
+     * @param {Directions} direction 
+     */
     move(direction){
 
         //snap to the target position for safety.
@@ -93,7 +155,9 @@ class MoveableEntity extends Entity{
         }
     }
 
-    /** Move to target, then move back to original position */
+    /**
+     * On a bounce back, Move to entity target, then back to original position
+     */
     setBounceBack(){
         // how far the player is pushed into the wall
         this.targetX = this.xPosition + (this.currentDirection.dx * this.speed * TILESIZE) * this.slamFactor;
@@ -108,7 +172,9 @@ class MoveableEntity extends Entity{
         this.previousY = this.yPosition;
     }
 
-    /** Move to target, then fall (shrink texture over time) */
+    /** 
+     * When Falling, Move to enetity to target, then fall (shrink texture over time) 
+     * */
     setFall(){
         this.isFalling = true;
         this.xPosition = this.previousX = this.targetX;
@@ -116,13 +182,21 @@ class MoveableEntity extends Entity{
         this.startingSize = this.size;
     }
 
+    /**
+     * Sets the Entites position as the given coordinates
+     * @param {Number} x 
+     * @param {Number} y 
+     */
     setPosition(x, y){
         super.setPosition(x,y);
         this.targetX = this.previousX = x;
         this.targetY = this.previousY = y;
     }
 
-    /** lerp the current position towards the target position */
+    /**
+     * lerp the current position towards the target position
+     * @param {Number} dt 
+     */
     update(dt){
 
         //linear interpolation

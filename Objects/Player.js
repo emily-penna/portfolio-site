@@ -5,16 +5,31 @@
  */
 class Player extends MoveableEntity{
 
-    //how much gold the player has collected, represents score.
-    gold;
-    
-
+    /**
+     * Construct a Player Entity
+     * @param {Number} [x] 
+     * @param {Number} [y] 
+     */
     constructor(x = 0, y = 0){
+
         super(PLAYER_HEALTH, PLAYER_SPEED, x, y);  
+
+        // START VARIABLE DECLARATIONS ---------------------------------
+
+        /**
+         * how much gold the player has collected, represents score.
+         * @type {Number}
+         */
+        this.gold;
+
+        // END VARIABLE DECLARATIONS -----------------------------------
+        
         this.gold = 0;
     }
 
-    /** return all variables to their default value. */
+    /**
+     * return all variables to their default value. Used on gameover.
+     */
     reset(){
         this.gold =- 0
         this.health = PLAYER_HEALTH;

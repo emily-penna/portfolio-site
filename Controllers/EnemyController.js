@@ -2,20 +2,35 @@
  * Enemy Controller spawns and manages enemy actions.
  * Controls all of the enemies on their turn.
  */
-
-// import {Enemy} from "../Objects/Enemy.js"
-
 class EnemyController {
 
-    enemies; // array of all enemies on the current floor.
-    spawnRate = 2; // the rate of how many enemies should be spawned, as a function of the current floor.
-
     constructor() {
+        
+        // START VARIABLE DECLARATION ---------------------------------
+
+        /**
+         * Array of all enemies on the current floor.
+         * @type {Enemy[]}
+         */
+        this.enemies;
+
+        /**
+         * The rate of how many enemies should be spawned, as a function of the current floor.
+         * @type {Number}
+         */
+        this.spawnRate = 2; 
+
+        // END VARIABLE DECLARATION -------------------------------------
+
         this.enemies = [];
     }
     
-    // creates new enemies and adds them to the enemy list.
-    // needs a reference to the map unfortunately... to make sure enemies spawn on tiles.
+    /**
+     * Creates new enemies and adds them to the enemy list.
+     * needs a reference to the map to make sure enemies spawn on tiles.
+     * @param {*} grid 
+     * @param {*} floor 
+     */
     spawnEnemies(grid, floor) {
         this.enemies = []
         for (let i = 1; i < floor * this.spawnRate; i++){
@@ -25,7 +40,12 @@ class EnemyController {
         }
     }
 
+    /**
+     * Call the update function for each enemy
+     * @param {Number} dt 
+     */
     update(dt){
+        // remove enemies that have fallen.
         this.enemies = this.enemies.filter(e => e.size > 0);
 
         this.enemies.forEach(e => {
@@ -33,14 +53,20 @@ class EnemyController {
         });
     }
 
-    // call the draw function of each enemy.
+    /**
+     * call the draw function of each enemy.
+     * @param {CanvasRenderingContext2D} ctx 
+     */
     draw(ctx) {
         this.enemies.forEach(e => {
             e.draw(ctx)
         });
     }
 
-    /**move all enemies once */
+    /**
+     * move all enemies once, based on their movement speed
+     * @param {Grid} grid 
+     */
     move(grid){
         this.enemies.forEach(e => {
             e.move(this.getRandomDirection());
@@ -52,8 +78,10 @@ class EnemyController {
         });
     }
 
-
-    /**Return a random movement direction. Uniform disribution. */
+    /**
+     * Return a random movement direction. Uniform disribution. 
+     * @returns {Directions}
+     */
     getRandomDirection(){
         let dir = Math.floor(Math.random() * 4 + 1); //random number between 1 and 4
 
