@@ -1,3 +1,14 @@
+import { Directions, TILESIZE, DEBUG_MODE, TURN_TIME} from "../Constants.js"
+import {Grid} from "../Map/Grid.js"
+
+// Controllers
+import { EnemyController } from "./EnemyController.js";
+import { TreasureController } from "./TreasureController.js";
+import { CollisionController } from "./CollisionController.js";
+
+// Player
+import { Player } from "../Objects/Player.js";
+
 // Possible game states.
 const GameState = Object.freeze(
     {
@@ -14,7 +25,7 @@ const GameState = Object.freeze(
  * Manages communication between controllers.
  */
 
-class GameController {
+export class GameController {
 
     /**
      * Construct the game controller

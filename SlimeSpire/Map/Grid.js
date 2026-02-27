@@ -1,8 +1,10 @@
+import {Tile, TileTypes} from "./Tile.js"; 
+
 /**
  * The Grid holds the matrix of floor tiles.
  */
 
-class Grid {
+export class Grid {
 
     /**
      * Create a grid of tiles.

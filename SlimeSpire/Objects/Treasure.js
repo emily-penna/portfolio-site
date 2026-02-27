@@ -1,3 +1,5 @@
+import { Entity } from "./Entity.js";
+import { TILESIZE } from "../Constants.js";
 
 
 /** The amount of gold rewarded to the player on collection */
@@ -11,7 +13,7 @@ const TreasureTypes = Object.freeze(
 /**
  * Collectable gold in the level. The player collides with the treasure to collect it.
  */
-class Treasure extends Entity{
+export class Treasure extends Entity{
 
     /**
      * Construct a Treasure Entity

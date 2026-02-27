@@ -1,8 +1,12 @@
+import { MoveableEntity } from "./MoveableEntity.js";
+import { Player } from "./Player.js";
+import { TileTypes } from "../Map/Tile.js";
+
 /**
  * Public class for an Enemy.
  * An enemy can deal damage and will path towards the player.
  */
-class Enemy extends MoveableEntity{
+export class Enemy extends MoveableEntity{
 
    
     /**

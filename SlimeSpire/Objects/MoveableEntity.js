@@ -1,24 +1,12 @@
-/**
- * Enum cardinal directions.
- * @readonly
- * @enum {{name: string, dx: Number, dy: Number}}
- */
-const Directions = Object.freeze(
-    {
-        UP: {name: "up", dx: 0, dy: -1},
-        DOWN: {name: "down", dx: 0, dy: 1},
-        RIGHT: {name: 'right', dx: 1, dy: 0},
-        LEFT: {name: 'left', dx: -1, dy: 0},
-        NONE: {name: 'none', dx: 0, dy: 0}
-    }
-);
+import { Entity } from "./Entity.js";
+import { TILESIZE, TURN_TIME, Directions, approximatelyEqual } from "../Constants.js";
 
 
 /**
  * Public class for a MovableObject.
  * A moveable object is an entity that can update its position.
  */
-class MoveableEntity extends Entity{
+export class MoveableEntity extends Entity{
   
     /**
      * Construct a Movable Entity

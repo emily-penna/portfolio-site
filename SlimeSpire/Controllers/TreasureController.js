@@ -1,7 +1,10 @@
+import { Treasure } from "../Objects/Treasure.js";
+import { TILESIZE } from "../Constants.js";
+
 /**
  * Treasure Controller. manages the gold and treasure spawned in the level.
  */
-class TreasureController{
+export class TreasureController{
     
     constructor() {
 

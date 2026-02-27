@@ -1,8 +1,11 @@
+import { Enemy } from "../Objects/Enemy.js";
+import { Directions } from "../Constants.js";
+
 /**
  * Enemy Controller spawns and manages enemy actions.
  * Controls all of the enemies on their turn.
  */
-class EnemyController {
+export class EnemyController {
 
     constructor() {
         

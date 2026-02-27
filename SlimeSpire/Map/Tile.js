@@ -1,9 +1,11 @@
+import { TILESIZE } from "../Constants.js";
+
 /** 
  * All Possible tile types and their attributes 
  * @readonly
  * @enum {{name: string, walkable: boolean, color: string}}
  * */
-const TileTypes = Object.freeze(
+export const TileTypes = Object.freeze(
     {
         FLOOR: {name: "floor", walkable: true, color: "brown"},  
         HOLE: {name: "hole", walkable: true, color: "black"},
@@ -17,7 +19,7 @@ const TileTypes = Object.freeze(
 /**
  * Represents a tile in the map grid.
  */
-class Tile {
+export class Tile {
 
     constructor(x, y, type = TileTypes.FLOOR) {
 

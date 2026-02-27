@@ -1,9 +1,12 @@
+import { MoveableEntity } from "../Objects/MoveableEntity.js";
+import { TileTypes } from "../Map/Tile.js";
+
 /**
  * Collision Controller checks for and resolves collisions between groups of Entities.
  * A collision only occurs if 2 entities share the same tile/space.
  */
 
-class CollisionController {
+export class CollisionController {
 
     /**
      * Resolve any collisions between a single moveable entity and a group of entities.

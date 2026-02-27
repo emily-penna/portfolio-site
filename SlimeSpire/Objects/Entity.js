@@ -4,7 +4,7 @@
  * 
  * @class Entity
  */
-class Entity {
+export class Entity {
 
     /**
      * Construct an Entity

@@ -1,9 +1,15 @@
+import { MoveableEntity } from "./MoveableEntity.js";
+import { PLAYER_HEALTH, PLAYER_SPEED} from "../Constants.js";
+import { Enemy } from "./Enemy.js";
+import { Treasure } from "./Treasure.js";
+import { TileTypes } from "../Map/Tile.js";
+
 /**
  * Public class for a Player.
  * A player is controlled by the user.
  * Has a health bar and can gain gold (points)
  */
-class Player extends MoveableEntity{
+export class Player extends MoveableEntity{
 
     /**
      * Construct a Player Entity

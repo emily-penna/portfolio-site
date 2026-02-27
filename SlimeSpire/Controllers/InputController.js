@@ -1,3 +1,5 @@
+import { Directions } from "../Constants.js";
+
 /**
  * Reads player input when its the player's turn, and translates them to gameplay actions.
  */
@@ -6,7 +8,7 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 let inputHistory = [Directions.NONE];
-let currentInput = Directions.NONE;
+export let currentInput = Directions.NONE;
 
 function keyDownHandler(e) {
     if (e.key === "Right" || e.key === "ArrowRight") {
