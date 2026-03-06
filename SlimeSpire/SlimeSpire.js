@@ -1,6 +1,8 @@
 import * as SlimeSpire from "./Controllers/GameController.js"
 import * as InputController from "./Controllers/InputController.js"
 
+const canvas = document.getElementById("gameWindow");
+const ctx = canvas.getContext("2d");
 const game = new SlimeSpire.GameController(canvas.width, canvas.height);
 let startTime = Date.now();
 

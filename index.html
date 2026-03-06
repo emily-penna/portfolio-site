@@ -2,33 +2,34 @@
 <html lang="en-US">
 
   <head>
+    <link rel="stylesheet" href="./css/style.css">
+    
     <script type="module" src="./SlimeSpire/SlimeSpire.js"></script>
-
+    
     <meta charset="utf-8" />
+    
     <title>Slime Spire</title>
-    <style>
-      * {
-        padding: 0;
-        margin: 0;
-      }
-      canvas {
-        background: #eeeeee;
-        display: block;
-        margin: 0 auto;
-      }
-    </style>
+    
   </head>
 
 
   <body>
-    <canvas id="myCanvas" width="300" height="300"></canvas>
 
-    <script>
+    <div class = "header">
+        <h1> Header!! Emily!! </h1>
+    </div>
 
-      const canvas = document.getElementById("myCanvas");
-      const ctx = canvas.getContext("2d");
+    <!-- Navigation Bar -->
+    <nav id = "nav"> </nav>
 
+    <canvas id="gameWindow" width="300" height="300"></canvas>
+
+    <script type = "module">
+      import * as main from "./main.js"
+      main.NavigationBar(0);
     </script>
+
+
   </body>
 
 
